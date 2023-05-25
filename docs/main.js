@@ -6,7 +6,7 @@ var VirtualMachine = class {
     this.stack = [];
     this.executePop = () => {
       const value = this.stack.pop();
-      if (value) {
+      if (value || value === 0) {
         return value;
       } else {
         throw new Error("Stack underflow");
@@ -37,6 +37,9 @@ var VirtualMachine = class {
       const a = this.executePop();
       const b = this.executePop();
       const result = Math.floor(b / a);
+      if (a === 0) {
+        throw new Error("Division by zero");
+      }
       this.stack.push(result);
     };
     this.executeMod = () => {
@@ -57,7 +60,7 @@ var VirtualMachine = class {
         case 1:
           break;
         default:
-          throw new Error("Stack is not empty");
+          throw new Error("Too many values in stack");
       }
     };
     this.execute = (input) => {
