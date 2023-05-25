@@ -1,83 +1,135 @@
 "use strict";
 
 // src/vm/index.ts
-var stack = [];
-var executePush = (value) => {
-  stack.push(value);
-};
-var executeAdd = () => {
-  const a = stack.pop();
-  const b = stack.pop();
-  const result = a + b;
-  stack.push(result);
-};
-var executeSub = () => {
-  const a = stack.pop();
-  const b = stack.pop();
-  const result = b - a;
-  stack.push(result);
-};
-var executeMul = () => {
-  const a = stack.pop();
-  const b = stack.pop();
-  const result = a * b;
-  stack.push(result);
-};
-var executeDiv = () => {
-  const a = stack.pop();
-  const b = stack.pop();
-  const result = Math.floor(b / a);
-  stack.push(result);
-};
-var executeMod = () => {
-  const a = stack.pop();
-  const b = stack.pop();
-  const result = b % a;
-  stack.push(result);
-};
-var executePrint = () => {
-  const a = stack.pop();
-  console.log(a);
-};
-var virtualMachine = (instructions2) => {
-  for (const instruction of instructions2) {
-    switch (instruction.name) {
-      case "push":
-        executePush(instruction.value);
-        break;
-      case "add":
-        executeAdd();
-        break;
-      case "sub":
-        executeSub();
-        break;
-      case "mul":
-        executeMul();
-        break;
-      case "div":
-        executeDiv();
-        break;
-      case "mod":
-        executeMod();
-        break;
-      case "print":
-        executePrint();
-        break;
-      default:
-        throw new Error(`Unknown instruction: ${instruction.name}`);
-    }
+var VirtualMachine = class {
+  constructor() {
+    this.stack = [];
+    this.executePop = () => {
+      const value = this.stack.pop();
+      if (value) {
+        return value;
+      } else {
+        throw new Error("Stack underflow");
+      }
+    };
+    this.executePush = (value) => {
+      this.stack.push(value);
+    };
+    this.executeAdd = () => {
+      const a = this.executePop();
+      const b = this.executePop();
+      const result = a + b;
+      this.stack.push(result);
+    };
+    this.executeSub = () => {
+      const a = this.executePop();
+      const b = this.executePop();
+      const result = b - a;
+      this.stack.push(result);
+    };
+    this.executeMul = () => {
+      const a = this.executePop();
+      const b = this.executePop();
+      const result = a * b;
+      this.stack.push(result);
+    };
+    this.executeDiv = () => {
+      const a = this.executePop();
+      const b = this.executePop();
+      const result = Math.floor(b / a);
+      this.stack.push(result);
+    };
+    this.executeMod = () => {
+      const a = this.executePop();
+      const b = this.executePop();
+      const result = b % a;
+      this.stack.push(result);
+    };
+    this.executePrint = () => {
+      const a = this.executePop();
+      return a;
+    };
+    /** スタックエラーを検出する */
+    this.detectStackError = () => {
+      switch (this.stack.length) {
+        case 0:
+          throw new Error("Stack is empty");
+        case 1:
+          break;
+        default:
+          throw new Error("Stack is not empty");
+      }
+    };
+    this.execute = (input) => {
+      var _a;
+      this.stack = [];
+      for (const char of input.split(" ")) {
+        switch (char) {
+          case ((_a = char.match(/[0-9]+/)) == null ? void 0 : _a[0]):
+            this.executePush(Number(char));
+            break;
+          case "+":
+            this.executeAdd();
+            break;
+          case "-":
+            this.executeSub();
+            break;
+          case "*":
+            this.executeMul();
+            break;
+          case "/":
+            this.executeDiv();
+            break;
+          case "%":
+            this.executeMod();
+            break;
+          case "":
+            break;
+          default:
+            throw new Error(`Syntax error: ${char}`);
+        }
+      }
+      this.detectStackError();
+      return this.executePrint();
+    };
   }
 };
 
 // src/main.ts
-var instructions = [
-  { name: "push", value: 1 },
-  { name: "push", value: 2 },
-  { name: "add" },
-  { name: "push", value: 3 },
-  { name: "push", value: 4 },
-  { name: "add" },
-  { name: "mul" },
-  { name: "print" }
-];
-virtualMachine(instructions);
+var inputElement = document.getElementById("input");
+var outputElement = document.getElementById("output");
+var historiesElement = document.getElementById("histories");
+var virtualMachine = new VirtualMachine();
+var useVirtualMachine = () => {
+  try {
+    const input = inputElement.value;
+    const output = virtualMachine.execute(input);
+    outputElement.value = String(output);
+  } catch (e) {
+    if (e instanceof Error) {
+      outputElement.value = e.message;
+      console.error(e.message);
+    }
+  }
+};
+var addHistory = () => {
+  const input = inputElement.value;
+  const output = outputElement.value;
+  const li = document.createElement("li");
+  li.textContent = `${input} ---> ${output}`;
+  li.classList.add("list-group-item");
+  historiesElement.appendChild(li);
+  inputElement.value = "";
+  outputElement.value = "";
+};
+window.addEventListener("load", () => {
+  useVirtualMachine();
+});
+inputElement.addEventListener("input", () => {
+  useVirtualMachine();
+});
+inputElement.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    addHistory();
+  }
+});
