@@ -43,6 +43,9 @@ export class VirtualMachine {
     const a = this.executePop();
     const b = this.executePop();
     const result = Math.floor(b / a);
+    if (a === 0) {
+      throw new Error("Division by zero");
+    }
     this.stack.push(result);
   }
 
