@@ -66,7 +66,7 @@ export class VirtualMachine {
       case 1:
         break; // 正常
       default:
-        throw new Error("Stack is not empty");
+        throw new Error("Too many values in stack");
     }
   }
 
