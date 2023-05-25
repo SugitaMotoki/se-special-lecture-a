@@ -7,7 +7,7 @@ export class VirtualMachine {
 
   private executePop = () => {
     const value = this.stack.pop();
-    if (value) {
+    if (value || value === 0) {
       return value;
     } else {
       throw new Error("Stack underflow");
@@ -43,6 +43,9 @@ export class VirtualMachine {
     const a = this.executePop();
     const b = this.executePop();
     const result = Math.floor(b / a);
+    if (a === 0) {
+      throw new Error("Division by zero");
+    }
     this.stack.push(result);
   }
 
@@ -66,7 +69,7 @@ export class VirtualMachine {
       case 1:
         break; // 正常
       default:
-        throw new Error("Stack is not empty");
+        throw new Error("Too many values in stack");
     }
   }
 
