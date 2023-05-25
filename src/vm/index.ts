@@ -5,47 +5,56 @@ import { Input, Output } from "./type";
 export class VirtualMachine {
   private stack: number[] = [];
 
+  private executePop = () => {
+    const value = this.stack.pop();
+    if (value) {
+      return value;
+    } else {
+      throw new Error("Stack underflow");
+    }
+  }
+
   private executePush = (value: number) => {
     this.stack.push(value);
   }
 
   private executeAdd = () => {
-    const a = this.stack.pop()!;
-    const b = this.stack.pop()!;
+    const a = this.executePop();
+    const b = this.executePop();
     const result = a + b;
     this.stack.push(result);
   }
 
   private executeSub = () => {
-    const a = this.stack.pop()!;
-    const b = this.stack.pop()!;
+    const a = this.executePop();
+    const b = this.executePop();
     const result = b - a;
     this.stack.push(result);
   }
 
   private executeMul = () => {
-    const a = this.stack.pop()!;
-    const b = this.stack.pop()!;
+    const a = this.executePop();
+    const b = this.executePop();
     const result = a * b;
     this.stack.push(result);
   }
 
   private executeDiv = () => {
-    const a = this.stack.pop()!;
-    const b = this.stack.pop()!;
+    const a = this.executePop();
+    const b = this.executePop();
     const result = Math.floor(b / a);
     this.stack.push(result);
   }
 
   private executeMod = () => {
-    const a = this.stack.pop()!;
-    const b = this.stack.pop()!;
+    const a = this.executePop();
+    const b = this.executePop();
     const result = b % a;
     this.stack.push(result);
   }
 
   private executePrint = () => {
-    const a = this.stack.pop()!;
+    const a = this.executePop();
     return a;
   }
 
