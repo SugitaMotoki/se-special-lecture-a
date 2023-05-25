@@ -1,80 +1,109 @@
 "use strict";
 
-import { Instruction, Value } from "./type";
+import { Input, Output } from "./type";
 
-const stack: Value[] = []
+export class VirtualMachine {
+  private stack: number[] = [];
 
-const executePush = (value: number) => {
-  stack.push(value);
-}
-
-const executeAdd = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = a + b;
-  stack.push(result);
-}
-
-const executeSub = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = b - a;
-  stack.push(result);
-}
-
-const executeMul = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = a * b;
-  stack.push(result);
-}
-
-const executeDiv = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = Math.floor(b / a);
-  stack.push(result);
-}
-
-const executeMod = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = b % a;
-  stack.push(result);
-}
-
-const executePrint = () => {
-  const a = stack.pop()!;
-  console.log(a);
-}
-
-export const virtualMachine = (instructions: Instruction[]) => {
-  for (const instruction of instructions) {
-    switch (instruction.name) {
-      case "push":
-        executePush(instruction.value!);
-        break;
-      case "add":
-        executeAdd();
-        break;
-      case "sub":
-        executeSub();
-        break;
-      case "mul":
-        executeMul();
-        break;
-      case "div":
-        executeDiv();
-        break;
-      case "mod":
-        executeMod();
-        break;
-      case "print":
-        executePrint();
-        break;
-      default:
-        throw new Error(`Unknown instruction: ${instruction.name}`);
+  private executePop = () => {
+    const value = this.stack.pop();
+    if (value) {
+      return value;
+    } else {
+      throw new Error("Stack underflow");
     }
+  }
+
+  private executePush = (value: number) => {
+    this.stack.push(value);
+  }
+
+  private executeAdd = () => {
+    const a = this.executePop();
+    const b = this.executePop();
+    const result = a + b;
+    this.stack.push(result);
+  }
+
+  private executeSub = () => {
+    const a = this.executePop();
+    const b = this.executePop();
+    const result = b - a;
+    this.stack.push(result);
+  }
+
+  private executeMul = () => {
+    const a = this.executePop();
+    const b = this.executePop();
+    const result = a * b;
+    this.stack.push(result);
+  }
+
+  private executeDiv = () => {
+    const a = this.executePop();
+    const b = this.executePop();
+    const result = Math.floor(b / a);
+    this.stack.push(result);
+  }
+
+  private executeMod = () => {
+    const a = this.executePop();
+    const b = this.executePop();
+    const result = b % a;
+    this.stack.push(result);
+  }
+
+  private executePrint = () => {
+    const a = this.executePop();
+    return a;
+  }
+
+  /** スタックエラーを検出する */
+  private detectStackError = () => {
+    switch (this.stack.length) {
+      case 0:
+        throw new Error("Stack is empty");
+      case 1:
+        break; // 正常
+      default:
+        throw new Error("Stack is not empty");
+    }
+  }
+
+  public execute = (input: Input): Output => {
+    // stackを初期化
+    this.stack = [];
+
+    for (const char of input.split(" ")) {
+      switch (char) {
+        case char.match(/[0-9]+/)?.[0]:
+          this.executePush(Number(char));
+          break;
+        case "+":
+          this.executeAdd();
+          break;
+        case "-":
+          this.executeSub();
+          break;
+        case "*":
+          this.executeMul();
+          break;
+        case "/":
+          this.executeDiv();
+          break;
+        case "%":
+          this.executeMod();
+          break;
+        case "":
+          break;
+        default:
+          throw new Error(`Syntax error: ${char}`);
+      }
+    }
+
+    this.detectStackError();
+
+    return this.executePrint();
   }
 }
 

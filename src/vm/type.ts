@@ -1,10 +1,5 @@
 "use strict";
 
-export type Instruction = {
-  name: Name,
-  value?: Value,
-}
+export type Input = string;
 
-export type Name =string;
-
-export type Value = number;
+export type Output = number;
