@@ -1,8 +1,8 @@
 "use strict";
 
-import { Instruction, Value } from "./type";
+import { Input, Output } from "./type";
 
-const stack: Value[] = []
+let stack: number[] = []
 
 const executePush = (value: number) => {
   stack.push(value);
@@ -45,37 +45,43 @@ const executeMod = () => {
 
 const executePrint = () => {
   const a = stack.pop()!;
-  console.log(a);
+  return a;
 }
 
-export const virtualMachine = (instructions: Instruction[]) => {
-  for (const instruction of instructions) {
-    switch (instruction.name) {
-      case "push":
-        executePush(instruction.value!);
+export const virtualMachine = (input: Input): Output => {
+  // スタックを初期化
+  stack = [];
+
+  for (const ctx of input.split(" ")) {
+    switch (ctx) {
+      case ctx.match(/[0-9]+/)?.[0]:
+        executePush(Number(ctx));
         break;
-      case "add":
+      case "+":
         executeAdd();
         break;
-      case "sub":
+      case "-":
         executeSub();
         break;
-      case "mul":
+      case "*":
         executeMul();
         break;
-      case "div":
+      case "/":
         executeDiv();
         break;
-      case "mod":
+      case "%":
         executeMod();
         break;
-      case "print":
-        executePrint();
+      case "":
         break;
       default:
-        throw new Error(`Unknown instruction: ${instruction.name}`);
+        throw new Error(`Unknown character: ${ctx}`);
     }
   }
+  if (stack.length !== 1) {
+    throw new Error("Stack is not empty");
+  }
+  return executePrint();
 }
 
 export * from "./type"
