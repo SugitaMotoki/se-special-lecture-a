@@ -7,7 +7,7 @@ export class VirtualMachine {
 
   private executePop = () => {
     const value = this.stack.pop();
-    if (value) {
+    if (value || value === 0) {
       return value;
     } else {
       throw new Error("Stack underflow");
