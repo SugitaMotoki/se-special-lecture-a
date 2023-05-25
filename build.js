@@ -3,7 +3,7 @@
 const esbuild = require("esbuild");
 
 const options = {
-  outdir: "./dist",
+  outdir: "./docs",
   bundle: true,
   format: "cjs",
   treeShaking: false,
