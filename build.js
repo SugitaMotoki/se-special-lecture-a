@@ -8,7 +8,7 @@ const options = {
   format: "cjs",
   treeShaking: false,
   minify: false,
-  sourcemap: true,
+  sourcemap: false,
   tsconfig: "tsconfig.json",
   entryPoints: [
     "src/main.ts"
