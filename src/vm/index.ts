@@ -2,86 +2,100 @@
 
 import { Input, Output } from "./type";
 
-let stack: number[] = []
+export class VirtualMachine {
+  private stack: number[] = [];
 
-const executePush = (value: number) => {
-  stack.push(value);
-}
+  private executePush = (value: number) => {
+    this.stack.push(value);
+  }
 
-const executeAdd = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = a + b;
-  stack.push(result);
-}
+  private executeAdd = () => {
+    const a = this.stack.pop()!;
+    const b = this.stack.pop()!;
+    const result = a + b;
+    this.stack.push(result);
+  }
 
-const executeSub = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = b - a;
-  stack.push(result);
-}
+  private executeSub = () => {
+    const a = this.stack.pop()!;
+    const b = this.stack.pop()!;
+    const result = b - a;
+    this.stack.push(result);
+  }
 
-const executeMul = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = a * b;
-  stack.push(result);
-}
+  private executeMul = () => {
+    const a = this.stack.pop()!;
+    const b = this.stack.pop()!;
+    const result = a * b;
+    this.stack.push(result);
+  }
 
-const executeDiv = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = Math.floor(b / a);
-  stack.push(result);
-}
+  private executeDiv = () => {
+    const a = this.stack.pop()!;
+    const b = this.stack.pop()!;
+    const result = Math.floor(b / a);
+    this.stack.push(result);
+  }
 
-const executeMod = () => {
-  const a = stack.pop()!;
-  const b = stack.pop()!;
-  const result = b % a;
-  stack.push(result);
-}
+  private executeMod = () => {
+    const a = this.stack.pop()!;
+    const b = this.stack.pop()!;
+    const result = b % a;
+    this.stack.push(result);
+  }
 
-const executePrint = () => {
-  const a = stack.pop()!;
-  return a;
-}
+  private executePrint = () => {
+    const a = this.stack.pop()!;
+    return a;
+  }
 
-export const virtualMachine = (input: Input): Output => {
-  // スタックを初期化
-  stack = [];
-
-  for (const ctx of input.split(" ")) {
-    switch (ctx) {
-      case ctx.match(/[0-9]+/)?.[0]:
-        executePush(Number(ctx));
-        break;
-      case "+":
-        executeAdd();
-        break;
-      case "-":
-        executeSub();
-        break;
-      case "*":
-        executeMul();
-        break;
-      case "/":
-        executeDiv();
-        break;
-      case "%":
-        executeMod();
-        break;
-      case "":
-        break;
+  /** スタックエラーを検出する */
+  private detectStackError = () => {
+    switch (this.stack.length) {
+      case 0:
+        throw new Error("Stack is empty");
+      case 1:
+        break; // 正常
       default:
-        throw new Error(`Unknown character: ${ctx}`);
+        throw new Error("Stack is not empty");
     }
   }
-  if (stack.length !== 1) {
-    throw new Error("Stack is not empty");
+
+  public execute = (input: Input): Output => {
+    // stackを初期化
+    this.stack = [];
+
+    for (const char of input.split(" ")) {
+      switch (char) {
+        case char.match(/[0-9]+/)?.[0]:
+          this.executePush(Number(char));
+          break;
+        case "+":
+          this.executeAdd();
+          break;
+        case "-":
+          this.executeSub();
+          break;
+        case "*":
+          this.executeMul();
+          break;
+        case "/":
+          this.executeDiv();
+          break;
+        case "%":
+          this.executeMod();
+          break;
+        case "":
+          break;
+        default:
+          throw new Error(`Syntax error: ${char}`);
+      }
+    }
+
+    this.detectStackError();
+
+    return this.executePrint();
   }
-  return executePrint();
 }
 
 export * from "./type"

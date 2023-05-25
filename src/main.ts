@@ -1,15 +1,17 @@
 "use strict";
 
-import { virtualMachine, Output} from "./vm";
+import { VirtualMachine, Output} from "./vm";
 
 const inputElement = document.getElementById("input") as HTMLInputElement;
 const outputElement = document.getElementById("output") as HTMLInputElement;
+
+const virtualMachine = new VirtualMachine();
 
 /** VMを呼び出す */
 const useVirtualMachine = () => {
   try {
     const input = inputElement.value;
-    const output: Output = virtualMachine(input);
+    const output: Output = virtualMachine.execute(input);
     outputElement.value = String(output);
   } catch (e) {
     if (e instanceof Error) {
