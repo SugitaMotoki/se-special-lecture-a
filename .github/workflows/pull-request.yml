@@ -16,6 +16,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: docs
   preview:
     environment:
       name: github-pages
