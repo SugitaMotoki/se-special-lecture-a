@@ -2,6 +2,15 @@
 
 ## システム
 
+```
+src
+├── index.html
+├── main.ts
+└── vm
+    ├── index.ts
+    └── type.ts
+```
+
 ### リンク
 
 - https://sugitamotoki.github.io/se-special-lecture-a/
