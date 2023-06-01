@@ -1,5 +1,3 @@
-"use strict";
-
 import { Input, Output } from "./type";
 
 export class VirtualMachine {
@@ -9,35 +7,34 @@ export class VirtualMachine {
     const value = this.stack.pop();
     if (value || value === 0) {
       return value;
-    } else {
-      throw new Error("Stack underflow");
     }
-  }
+    throw new Error("Stack underflow");
+  };
 
   private executePush = (value: number) => {
     this.stack.push(value);
-  }
+  };
 
   private executeAdd = () => {
     const a = this.executePop();
     const b = this.executePop();
     const result = a + b;
     this.stack.push(result);
-  }
+  };
 
   private executeSub = () => {
     const a = this.executePop();
     const b = this.executePop();
     const result = b - a;
     this.stack.push(result);
-  }
+  };
 
   private executeMul = () => {
     const a = this.executePop();
     const b = this.executePop();
     const result = a * b;
     this.stack.push(result);
-  }
+  };
 
   private executeDiv = () => {
     const a = this.executePop();
@@ -47,19 +44,19 @@ export class VirtualMachine {
       throw new Error("Division by zero");
     }
     this.stack.push(result);
-  }
+  };
 
   private executeMod = () => {
     const a = this.executePop();
     const b = this.executePop();
     const result = b % a;
     this.stack.push(result);
-  }
+  };
 
   private executePrint = () => {
     const a = this.executePop();
     return a;
-  }
+  };
 
   /** スタックエラーを検出する */
   private detectStackError = () => {
@@ -71,7 +68,7 @@ export class VirtualMachine {
       default:
         throw new Error("Too many values in stack");
     }
-  }
+  };
 
   public execute = (input: Input): Output => {
     // stackを初期化
@@ -79,7 +76,7 @@ export class VirtualMachine {
 
     for (const char of input.split(" ")) {
       switch (char) {
-        case char.match(/[0-9]+/)?.[0]:
+        case char.match(/[0-9]+/u)?.[0]:
           this.executePush(Number(char));
           break;
         case "+":
@@ -107,7 +104,7 @@ export class VirtualMachine {
     this.detectStackError();
 
     return this.executePrint();
-  }
+  };
 }
 
-export * from "./type"
+export * from "./type";
