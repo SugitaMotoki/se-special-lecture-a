@@ -17,7 +17,6 @@ jobs:
       - run: npm ci
       - run: npm run build
   preview:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.url }}
