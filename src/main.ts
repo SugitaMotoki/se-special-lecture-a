@@ -1,10 +1,12 @@
 "use strict";
 
-import { VirtualMachine, Output} from "./vm";
+import { VirtualMachine, Output } from "./vm";
 
 const inputElement = document.getElementById("input") as HTMLInputElement;
 const outputElement = document.getElementById("output") as HTMLInputElement;
-const historiesElement = document.getElementById("histories") as HTMLUListElement;
+const historiesElement = document.getElementById(
+  "histories",
+) as HTMLUListElement;
 
 const virtualMachine = new VirtualMachine();
 
@@ -20,7 +22,7 @@ const useVirtualMachine = () => {
       console.error(e.message);
     }
   }
-}
+};
 
 /** 履歴を残す */
 const addHistory = () => {
@@ -32,7 +34,7 @@ const addHistory = () => {
   historiesElement.appendChild(li);
   inputElement.value = "";
   outputElement.value = "";
-}
+};
 
 /** ページ読み込み時に1回実行する */
 window.addEventListener("load", () => {
