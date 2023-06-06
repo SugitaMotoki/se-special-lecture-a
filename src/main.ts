@@ -1,6 +1,6 @@
 "use strict";
 
-import { VirtualMachine, Output } from "./vm";
+import { Output, PostfixCalculator } from "./vm/postfix_calculator";
 
 const inputElement = document.getElementById("input") as HTMLInputElement;
 const outputElement = document.getElementById("output") as HTMLInputElement;
@@ -8,7 +8,7 @@ const historiesElement = document.getElementById(
   "histories",
 ) as HTMLUListElement;
 
-const virtualMachine = new VirtualMachine();
+const virtualMachine = new PostfixCalculator();
 
 /** VMを呼び出す */
 const useVirtualMachine = () => {
