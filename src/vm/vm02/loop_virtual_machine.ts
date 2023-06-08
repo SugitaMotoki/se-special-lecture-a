@@ -3,6 +3,12 @@ export abstract class LoopVirtualMachine {
   /** VMのスタック */
   private stack: number[] = [];
 
+  /** 命令の行数 */
+  protected line = 0;
+
+  /** ラベル */
+  private label = new Map<string, number>();
+
   /** グローバル変数 */
   private global = new Map<string, number>();
 
@@ -87,6 +93,29 @@ export abstract class LoopVirtualMachine {
     } else {
       throw new Error(`Undefined global variable: ${name}`);
     }
+  };
+
+  /** ラベルの定義 */
+  protected _setLabel = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("set_label requires an argument");
+    }
+    if (this.label.has(name)) {
+      throw new Error(`Duplicated label: ${name}`);
+    }
+    this.label.set(name, this.line);
+  };
+
+  /** ラベルで指定された行へジャンプ */
+  protected _jump = (label: string | undefined) => {
+    if (!label) {
+      throw new Error("jump requires an argument");
+    }
+    const line = this.label.get(label);
+    if (line === undefined) {
+      throw new Error(`Undefined label: ${label}`);
+    }
+    this.line = line;
   };
 
   /** 値を出力する */

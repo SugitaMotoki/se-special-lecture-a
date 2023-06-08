@@ -11,12 +11,24 @@ export class Jump extends LoopVirtualMachine {
      */
     const instructions: string[][] = this.generateInstructionSet(input);
 
-    /** 命令の行数 */
-    let line = 0;
+    // 行数をリセット
+    this.line = 0;
 
-    while (line < instructions.length) {
+    // ラベルのみ先に走査する
+    while (this.line < instructions.length) {
+      const instruction = instructions[this.line]!;
+      if (instruction[0] === "label") {
+        this._setLabel(instruction[1]);
+      }
+      this.line++;
+    }
+
+    // 行数をリセット
+    this.line = 0;
+
+    while (this.line < instructions.length) {
       /** ${line}行目の命令 */
-      const instruction = instructions[line]!; // whileの条件より必ず存在する
+      const instruction = instructions[this.line]!; // whileの条件より必ず存在する
 
       switch (instruction[0]) {
         case "push":
@@ -46,14 +58,20 @@ export class Jump extends LoopVirtualMachine {
         case "get_global":
           this._getGlobal(instruction[1]);
           break;
+        case "jump":
+          this._jump(instruction[1]);
+          break;
         case "print":
           this.printData.push(String(this._pop()));
+          break;
+        case "label":
+          // ここでは何もしない
           break;
         default:
           throw new Error(`Syntax error: ${instruction}`);
       }
       console.log(instruction);
-      line++;
+      this.line++;
     }
     console.log(this.printData);
     return this.printData.join("\n");
