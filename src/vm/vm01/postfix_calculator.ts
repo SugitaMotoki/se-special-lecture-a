@@ -1,6 +1,7 @@
-import { Input, Instruction, Output } from "./types";
-
-export abstract class VirtualMachine {
+/**
+ * 後置式電卓を行うVM
+ */
+export class PostfixCalculator {
   /** VMのスタック */
   private stack: number[] = [];
 
@@ -80,24 +81,35 @@ export abstract class VirtualMachine {
     }
   };
 
-  /**
-   * 命令セットの生成
-   * @param {string} input 入力文字列
-   * @returns {Instruction[]} 命令セット
-   */
-  protected generateInstructionSet = (input: Input): Instruction[] => {
-    const lines = input.split("\n");
-    const instructions: Instruction[] = [];
-    try {
-      for (const line of lines) {
-        instructions.push(line.split(" ") as Instruction);
+  public execute(input: string): number {
+    for (const char of input.split(" ")) {
+      switch (char) {
+        case char.match(/[0-9]+/u)?.[0]:
+          this._push(Number(char));
+          break;
+        case "+":
+          this._add();
+          break;
+        case "-":
+          this._sub();
+          break;
+        case "*":
+          this._mul();
+          break;
+        case "/":
+          this._div();
+          break;
+        case "%":
+          this._mod();
+          break;
+        case "":
+          break;
+        default:
+          throw new Error(`Syntax error: ${char}`);
       }
-    } catch (error) {
-      throw new Error(`Syntax error: ${error}`);
     }
-    return instructions;
-  };
 
-  /** VMを実行する */
-  abstract execute(input: Input): Output;
+    this.hasStackError();
+    return this._pop();
+  }
 }
