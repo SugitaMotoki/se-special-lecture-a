@@ -82,7 +82,6 @@ export class For extends LoopVirtualMachine {
         default:
           throw new Error(`Syntax error: ${instruction}`);
       }
-      console.log(instruction);
       this.line++;
     }
     return this.printData.join("\n");
