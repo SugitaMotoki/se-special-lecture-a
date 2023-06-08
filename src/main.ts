@@ -1,5 +1,3 @@
-"use strict";
-
 import { vm01 } from "./vm";
 
 const inputElement = document.getElementById("input") as HTMLInputElement;

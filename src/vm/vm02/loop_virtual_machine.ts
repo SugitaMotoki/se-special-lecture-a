@@ -30,13 +30,15 @@ export abstract class LoopVirtualMachine {
 
   /** スタックに値を積む */
   protected _push = (value: number | string | undefined) => {
-    if (value === undefined) {
-      throw new Error("push requires an argument");
+    switch (typeof value) {
+      case "undefined":
+        throw new Error("push requires an argument");
+      case "string":
+        this.stack.push(this.toNumber(value));
+        break;
+      default:
+        this.stack.push(value);
     }
-    if (typeof value === "string") {
-      value = this.toNumber(value);
-    }
-    this.stack.push(value);
   };
 
   /** 加算 */
@@ -126,7 +128,7 @@ export abstract class LoopVirtualMachine {
       throw new Error("jump requires an argument");
     }
     const line = this.label.get(label);
-    if (line === undefined) {
+    if (typeof line === "undefined") {
       throw new Error(`Undefined label: ${label}`);
     }
     this.line = line;
@@ -140,7 +142,7 @@ export abstract class LoopVirtualMachine {
     const a = this._pop();
     if (a !== 0) {
       const line = this.label.get(label);
-      if (line === undefined) {
+      if (typeof line === "undefined") {
         throw new Error(`Undefined label: ${label}`);
       }
       this.line = line;
@@ -155,7 +157,7 @@ export abstract class LoopVirtualMachine {
     const a = this._pop();
     if (a === 0) {
       const line = this.label.get(label);
-      if (line === undefined) {
+      if (typeof line === "undefined") {
         throw new Error(`Undefined label: ${label}`);
       }
       this.line = line;

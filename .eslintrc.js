@@ -36,6 +36,9 @@ module.exports = {
     "line-comment-position": "off",
     "no-inline-comments": "off",
     "id-length": "off",
+    "no-console": "off",
+    "no-plusplus": "off",
+    "no-ternary": "off",
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "new-cap": ["error", {
         "capIsNewExceptionPattern": "@*", // Decoratorだけ許可
