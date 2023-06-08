@@ -203,7 +203,7 @@ export abstract class LoopVirtualMachine {
    * @returns {number} 数字
    */
   protected toNumber = (value: string): number => {
-    if (value.match(/^[0-9]+$/)) {
+    if (!Number.isNaN(Number(value))) {
       return Number(value);
     }
     throw new Error(`push requires a number: ${value} isn't allowed`);
