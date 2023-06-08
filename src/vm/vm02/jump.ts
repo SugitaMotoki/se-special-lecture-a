@@ -77,7 +77,10 @@ export class Jump extends LoopVirtualMachine {
           this.printData.push(String(this._pop()));
           break;
         case "label":
-          // ここでは何もしない
+          // labelは上で見ているのでここでは何もしない
+          break;
+        case "//":
+          // コメントなので無視
           break;
         default:
           throw new Error(`Syntax error: ${instruction}`);
