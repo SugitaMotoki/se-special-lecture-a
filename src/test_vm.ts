@@ -33,7 +33,6 @@ label END\
 const printWithFor = `\
 push 0
 set_global i
-get_global i
 push ${loop}
 start_for COUNT
 get_global i
