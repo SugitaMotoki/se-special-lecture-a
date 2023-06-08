@@ -1,6 +1,6 @@
 "use strict";
 
-import { VirtualMachine, Output } from "./vm";
+import { vm01 } from "./vm";
 
 const inputElement = document.getElementById("input") as HTMLInputElement;
 const outputElement = document.getElementById("output") as HTMLInputElement;
@@ -8,13 +8,13 @@ const historiesElement = document.getElementById(
   "histories",
 ) as HTMLUListElement;
 
-const virtualMachine = new VirtualMachine();
+const virtualMachine = new vm01.PostfixCalculator();
 
 /** VMを呼び出す */
 const useVirtualMachine = () => {
   try {
     const input = inputElement.value;
-    const output: Output = virtualMachine.execute(input);
+    const output: number = virtualMachine.execute(input);
     outputElement.value = String(output);
   } catch (e) {
     if (e instanceof Error) {

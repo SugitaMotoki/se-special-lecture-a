@@ -32,6 +32,7 @@ module.exports = {
     "no-magic-numbers": "off",
     "no-useless-constructor": "off",
     "no-return-await": "off",
+    "no-underscore-dangle": "off",
     "line-comment-position": "off",
     "no-inline-comments": "off",
     "id-length": "off",
