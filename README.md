@@ -28,8 +28,8 @@ src
 
 ### READMEへのリンク
 
-- [第1回](./src/vm/vm01/README.md)
-- [第2回](./src/vm/vm02/README.md)
+- [第1回](./src/vm/vm01/)
+- [第2回](./src/vm/vm02/)
 
 ## 更新
 
