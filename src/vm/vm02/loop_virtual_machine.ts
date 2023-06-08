@@ -3,6 +3,9 @@ export abstract class LoopVirtualMachine {
   /** VMのスタック */
   private stack: number[] = [];
 
+  /** グローバル変数 */
+  private global = new Map<string, number>();
+
   /** スタックから値を取り出す */
   protected _pop = () => {
     const value = this.stack.pop();
@@ -56,6 +59,28 @@ export abstract class LoopVirtualMachine {
       throw new Error("Division by zero");
     }
     this.stack.push(b % a);
+  };
+
+  /** グローバル変数の定義 */
+  protected _setGlobal = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("get_global requires an argument");
+    }
+    const a = this._pop();
+    this.global.set(name, a);
+  };
+
+  /** グローバル変数の取得 */
+  protected _getGlobal = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("get_global requires an argument");
+    }
+    const value = this.global.get(name);
+    if (value || value === 0) {
+      this.stack.push(value);
+    } else {
+      throw new Error(`Undefined global variable: ${name}`);
+    }
   };
 
   /** 値を出力する */
