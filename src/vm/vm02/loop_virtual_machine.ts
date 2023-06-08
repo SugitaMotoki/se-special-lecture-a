@@ -3,8 +3,21 @@ export abstract class LoopVirtualMachine {
   /** VMのスタック */
   private stack: number[] = [];
 
+  /** 命令の行数 */
+  protected line = 0;
+
+  /** ラベル */
+  private label = new Map<string, number>();
+
   /** グローバル変数 */
   private global = new Map<string, number>();
+
+  /** スタックの状態を確認する */
+  public _showStack = () => {
+    console.log("=== show stack ===");
+    console.log(this.stack);
+    console.log("==================");
+  };
 
   /** スタックから値を取り出す */
   protected _pop = () => {
@@ -17,17 +30,15 @@ export abstract class LoopVirtualMachine {
 
   /** スタックに値を積む */
   protected _push = (value: number | string | undefined) => {
-    if (value === undefined) {
-      throw new Error("push requires an argument");
+    switch (typeof value) {
+      case "undefined":
+        throw new Error("push requires an argument");
+      case "string":
+        this.stack.push(this.toNumber(value));
+        break;
+      default:
+        this.stack.push(value);
     }
-    if (typeof value === "string") {
-      if (value.match(/^[0-9]+$/)) {
-        value = Number(value);
-      } else {
-        throw new Error(`push requires a number: ${value} isn't allowed`);
-      }
-    }
-    this.stack.push(value);
   };
 
   /** 加算 */
@@ -71,6 +82,13 @@ export abstract class LoopVirtualMachine {
     this.stack.push(b % a);
   };
 
+  /** 等価 */
+  protected _equal = () => {
+    const a = this._pop();
+    const b = this._pop();
+    this.stack.push(a === b ? 1 : 0);
+  };
+
   /** グローバル変数の定義 */
   protected _setGlobal = (name: string | undefined) => {
     if (!name) {
@@ -90,6 +108,59 @@ export abstract class LoopVirtualMachine {
       this.stack.push(value);
     } else {
       throw new Error(`Undefined global variable: ${name}`);
+    }
+  };
+
+  /** ラベルの定義 */
+  protected _setLabel = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("set_label requires an argument");
+    }
+    if (this.label.has(name)) {
+      throw new Error(`Duplicated label: ${name}`);
+    }
+    this.label.set(name, this.line);
+  };
+
+  /** ラベルで指定された行へジャンプ */
+  protected _jump = (label: string | undefined) => {
+    if (!label) {
+      throw new Error("jump requires an argument");
+    }
+    const line = this.label.get(label);
+    if (typeof line === "undefined") {
+      throw new Error(`Undefined label: ${label}`);
+    }
+    this.line = line;
+  };
+
+  /** popした値が0以外ならジャンプ */
+  protected _jumpIf = (label: string | undefined) => {
+    if (!label) {
+      throw new Error("jump_if requires an argument");
+    }
+    const a = this._pop();
+    if (a !== 0) {
+      const line = this.label.get(label);
+      if (typeof line === "undefined") {
+        throw new Error(`Undefined label: ${label}`);
+      }
+      this.line = line;
+    }
+  };
+
+  /** popした値が0ならジャンプ */
+  protected _jumpIfZero = (label: string | undefined) => {
+    if (!label) {
+      throw new Error("jump_if_zero requires an argument");
+    }
+    const a = this._pop();
+    if (a === 0) {
+      const line = this.label.get(label);
+      if (typeof line === "undefined") {
+        throw new Error(`Undefined label: ${label}`);
+      }
+      this.line = line;
     }
   };
 
@@ -132,6 +203,19 @@ export abstract class LoopVirtualMachine {
       throw new Error(`Syntax error: ${error}`);
     }
     return instructions;
+  };
+
+  /**
+   * 与えられた文字列が数字であればnumber型にして返す
+   * 数字でなければエラーを投げる
+   * @param {string} value 文字列
+   * @returns {number} 数字
+   */
+  protected toNumber = (value: string): number => {
+    if (!Number.isNaN(Number(value))) {
+      return Number(value);
+    }
+    throw new Error(`push requires a number: ${value} isn't allowed`);
   };
 
   /** VMを実行する */
