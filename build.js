@@ -11,7 +11,8 @@ const options = {
   sourcemap: false,
   tsconfig: "tsconfig.json",
   entryPoints: [
-    "src/main.ts"
+    "src/main.ts",
+    "src/test_vm.ts"
   ],
 }
 
