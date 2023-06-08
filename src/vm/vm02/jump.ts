@@ -64,6 +64,12 @@ export class Jump extends LoopVirtualMachine {
         case "jump":
           this._jump(instruction[1]);
           break;
+        case "jump_if":
+          this._jumpIf(instruction[1]);
+          break;
+        case "jump_if_zero":
+          this._jumpIfZero(instruction[1]);
+          break;
         case "print":
           this.printData.push(String(this._pop()));
           break;

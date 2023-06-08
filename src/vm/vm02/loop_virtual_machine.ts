@@ -125,6 +125,36 @@ export abstract class LoopVirtualMachine {
     this.line = line;
   };
 
+  /** popした値が0以外ならジャンプ */
+  protected _jumpIf = (label: string | undefined) => {
+    if (!label) {
+      throw new Error("jump_if requires an argument");
+    }
+    const a = this._pop();
+    if (a !== 0) {
+      const line = this.label.get(label);
+      if (line === undefined) {
+        throw new Error(`Undefined label: ${label}`);
+      }
+      this.line = line;
+    }
+  };
+
+  /** popした値が0ならジャンプ */
+  protected _jumpIfZero = (label: string | undefined) => {
+    if (!label) {
+      throw new Error("jump_if_zero requires an argument");
+    }
+    const a = this._pop();
+    if (a === 0) {
+      const line = this.label.get(label);
+      if (line === undefined) {
+        throw new Error(`Undefined label: ${label}`);
+      }
+      this.line = line;
+    }
+  };
+
   /** 値を出力する */
   protected _print = () => {
     const a = this._pop();
