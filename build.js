@@ -12,7 +12,8 @@ const options = {
   tsconfig: "tsconfig.json",
   entryPoints: [
     "src/main.ts",
-    "src/vm/vm02/test_vm.ts"
+    "src/vm/vm02/test_vm.ts",
+    "src/demo/index.ts"
   ],
 }
 
