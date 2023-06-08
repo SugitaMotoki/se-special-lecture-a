@@ -85,7 +85,7 @@ export abstract class VirtualMachine {
    * @param {string} input 入力文字列
    * @returns {Instruction[]} 命令セット
    */
-  generateInstructionSet = (input: Input): Instruction[] => {
+  protected generateInstructionSet = (input: Input): Instruction[] => {
     const lines = input.split("\n");
     const instructions: Instruction[] = [];
     try {
