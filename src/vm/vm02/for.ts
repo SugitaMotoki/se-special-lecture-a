@@ -2,13 +2,7 @@ import { LoopVirtualMachine } from "./loop_virtual_machine";
 
 export class For extends LoopVirtualMachine {
   /** ループカウンタ */
-  private loopCounter = new Map<
-    string,
-    {
-      counter: number;
-      line: number;
-    }
-  >();
+  private loopCounter = new Map<string, number>();
 
   /* eslint max-lines-per-function: "off" */
   /* eslint max-statements: "off" */
@@ -25,6 +19,25 @@ export class For extends LoopVirtualMachine {
      * @example [["push", "1"], ["push", "2"], ["add"], ["print"]]
      */
     const instructions: string[][] = this.generateInstructionSet(input);
+
+    // 行数をリセット
+    this.line = 0;
+
+    // ラベルのみ先に走査する
+    while (this.line < instructions.length) {
+      const instruction = instructions[this.line]!;
+      switch (instruction[0]) {
+        case "start_for":
+          this._setLabel(`SF${instruction[1]}`);
+          break;
+        case "end_for":
+          this._setLabel(`EF${instruction[1]}`);
+          break;
+        default:
+          break;
+      }
+      this.line++;
+    }
 
     // 行数をリセット
     this.line = 0;
@@ -96,7 +109,11 @@ export class For extends LoopVirtualMachine {
       throw new Error("start_for requires an argument");
     }
     const a = this._pop();
-    this.loopCounter.set(loopLable, { counter: a, line: this.line });
+    if (a <= 0) {
+      this.line = this.label.get(`EF${loopLable}`)!;
+    } else {
+      this.loopCounter.set(loopLable, a - 1);
+    }
   }
 
   /** loopCounterが0になるまでstart_forに戻る */
@@ -108,12 +125,9 @@ export class For extends LoopVirtualMachine {
     if (typeof value === "undefined") {
       throw new Error(`Undefined loopLabel: ${loopLabel}`);
     }
-    if (value.counter > 0) {
-      this.line = value.line;
-      this.loopCounter.set(loopLabel, {
-        counter: value.counter - 1,
-        line: value.line,
-      });
+    if (value > 0) {
+      this.line = this.label.get(`SF${loopLabel}`)!;
+      this.loopCounter.set(loopLabel, value - 1);
     }
   }
 }

@@ -7,7 +7,7 @@ export abstract class LoopVirtualMachine {
   protected line = 0;
 
   /** ラベル */
-  private label = new Map<string, number>();
+  protected label = new Map<string, number>();
 
   /** グローバル変数 */
   private global = new Map<string, number>();

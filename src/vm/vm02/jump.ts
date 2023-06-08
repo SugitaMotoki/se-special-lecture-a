@@ -21,8 +21,12 @@ export class Jump extends LoopVirtualMachine {
     // ラベルのみ先に走査する
     while (this.line < instructions.length) {
       const instruction = instructions[this.line]!;
-      if (instruction[0] === "label") {
-        this._setLabel(instruction[1]);
+      switch (instruction[0]) {
+        case "label":
+          this._setLabel(instruction[1]);
+          break;
+        default:
+          break;
       }
       this.line++;
     }
