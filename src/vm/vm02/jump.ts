@@ -52,6 +52,9 @@ export class Jump extends LoopVirtualMachine {
         case "mod":
           this._mod();
           break;
+        case "equal":
+          this._equal();
+          break;
         case "set_global":
           this._setGlobal(instruction[1]);
           break;

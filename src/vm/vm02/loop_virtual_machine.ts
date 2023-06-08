@@ -73,6 +73,13 @@ export abstract class LoopVirtualMachine {
     this.stack.push(b % a);
   };
 
+  /** 等価 */
+  protected _equal = () => {
+    const a = this._pop();
+    const b = this._pop();
+    this.stack.push(a === b ? 1 : 0);
+  };
+
   /** グローバル変数の定義 */
   protected _setGlobal = (name: string | undefined) => {
     if (!name) {
