@@ -12,6 +12,13 @@ export abstract class LoopVirtualMachine {
   /** グローバル変数 */
   private global = new Map<string, number>();
 
+  /** スタックの状態を確認する */
+  public _showStack = () => {
+    console.log("=== show stack ===");
+    console.log(this.stack);
+    console.log("==================");
+  };
+
   /** スタックから値を取り出す */
   protected _pop = () => {
     const value = this.stack.pop();

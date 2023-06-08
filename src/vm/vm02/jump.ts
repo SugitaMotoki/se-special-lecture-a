@@ -31,6 +31,9 @@ export class Jump extends LoopVirtualMachine {
       const instruction = instructions[this.line]!; // whileの条件より必ず存在する
 
       switch (instruction[0]) {
+        case "debug_show_stack":
+          this._showStack();
+          break;
         case "push":
           this._push(instruction[1]);
           break;
