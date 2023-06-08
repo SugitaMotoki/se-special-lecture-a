@@ -20,6 +20,7 @@ src
     │   └── postfix_calculator.ts # 後置式電卓
     └── vm02/ # 第2回（2023/06/09）
         ├── README.md
+        ├── for.ts # ループをfor命令で実装したVM
         ├── index.ts
         ├── jump.ts # ループをjump命令で実装したVM
         └── loop_virtual_machine.ts # ループを実行するVMの抽象クラス
