@@ -2,15 +2,12 @@
  * ブラウザを使わずにVMを検証する
  */
 
-import {
-  // vm01,
-  vm02,
-} from "./vm";
+import { Jump, For } from ".";
 
 const loop = 10 ** 1;
 
-const jumpVm = new vm02.Jump();
-const forVm = new vm02.For();
+const jumpVm = new Jump();
+const forVm = new For();
 
 const printWithJump = `\
 push 0
