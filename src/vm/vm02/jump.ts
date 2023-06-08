@@ -5,6 +5,10 @@ export class Jump extends LoopVirtualMachine {
   private printData: string[] = [];
 
   public override execute(input: string): string {
+    /**
+     * 命令が格納された2次元配列
+     * @example [["push", "1"], ["push", "2"], ["add"], ["print"]]
+     */
     const instructions: string[][] = this.generateInstructionSet(input);
 
     /** 命令の行数 */
