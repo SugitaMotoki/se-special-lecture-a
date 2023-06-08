@@ -5,11 +5,22 @@ export class Jump extends LoopVirtualMachine {
   private printData: string[] = [];
 
   public override execute(input: string): string {
+    /**
+     * 命令が格納された2次元配列
+     * @example [["push", "1"], ["push", "2"], ["add"], ["print"]]
+     */
     const instructions: string[][] = this.generateInstructionSet(input);
-    for (const instruction of instructions) {
+
+    /** 命令の行数 */
+    let line = 0;
+
+    while (line < instructions.length) {
+      /** ${line}行目の命令 */
+      const instruction = instructions[line]!; // whileの条件より必ず存在する
+
       switch (instruction[0]) {
         case "push":
-          this._push(Number(instruction[1]));
+          this._push(instruction[1]);
           break;
         case "pop":
           this._pop();
@@ -29,6 +40,12 @@ export class Jump extends LoopVirtualMachine {
         case "mod":
           this._mod();
           break;
+        case "set_global":
+          this._setGlobal(instruction[1]);
+          break;
+        case "get_global":
+          this._getGlobal(instruction[1]);
+          break;
         case "print":
           this.printData.push(String(this._pop()));
           break;
@@ -36,6 +53,7 @@ export class Jump extends LoopVirtualMachine {
           throw new Error(`Syntax error: ${instruction}`);
       }
       console.log(instruction);
+      line++;
     }
     console.log(this.printData);
     return this.printData.join("\n");

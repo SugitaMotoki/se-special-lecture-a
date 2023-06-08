@@ -3,6 +3,9 @@ export abstract class LoopVirtualMachine {
   /** VMのスタック */
   private stack: number[] = [];
 
+  /** グローバル変数 */
+  private global = new Map<string, number>();
+
   /** スタックから値を取り出す */
   protected _pop = () => {
     const value = this.stack.pop();
@@ -13,7 +16,17 @@ export abstract class LoopVirtualMachine {
   };
 
   /** スタックに値を積む */
-  protected _push = (value: number) => {
+  protected _push = (value: number | string | undefined) => {
+    if (value === undefined) {
+      throw new Error("push requires an argument");
+    }
+    if (typeof value === "string") {
+      if (value.match(/^[0-9]+$/)) {
+        value = Number(value);
+      } else {
+        throw new Error(`push requires a number: ${value} isn't allowed`);
+      }
+    }
     this.stack.push(value);
   };
 
@@ -58,6 +71,28 @@ export abstract class LoopVirtualMachine {
     this.stack.push(b % a);
   };
 
+  /** グローバル変数の定義 */
+  protected _setGlobal = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("get_global requires an argument");
+    }
+    const a = this._pop();
+    this.global.set(name, a);
+  };
+
+  /** グローバル変数の取得 */
+  protected _getGlobal = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("get_global requires an argument");
+    }
+    const value = this.global.get(name);
+    if (value || value === 0) {
+      this.stack.push(value);
+    } else {
+      throw new Error(`Undefined global variable: ${name}`);
+    }
+  };
+
   /** 値を出力する */
   protected _print = () => {
     const a = this._pop();
@@ -89,7 +124,9 @@ export abstract class LoopVirtualMachine {
     const instructions: string[][] = [];
     try {
       for (const line of lines) {
-        instructions.push(line.split(" "));
+        if (line.trim() !== "") {
+          instructions.push(line.split(" "));
+        }
       }
     } catch (error) {
       throw new Error(`Syntax error: ${error}`);
