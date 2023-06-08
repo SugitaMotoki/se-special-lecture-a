@@ -9,7 +9,7 @@ export class Jump extends LoopVirtualMachine {
     for (const instruction of instructions) {
       switch (instruction[0]) {
         case "push":
-          this._push(Number(instruction[1]));
+          this._push(instruction[1]);
           break;
         case "pop":
           this._pop();

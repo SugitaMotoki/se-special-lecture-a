@@ -16,7 +16,17 @@ export abstract class LoopVirtualMachine {
   };
 
   /** スタックに値を積む */
-  protected _push = (value: number) => {
+  protected _push = (value: number | string | undefined) => {
+    if (value === undefined) {
+      throw new Error("push requires an argument");
+    }
+    if (typeof value === "string") {
+      if (value.match(/^[0-9]+$/)) {
+        value = Number(value);
+      } else {
+        throw new Error(`push requires a number: ${value} isn't allowed`);
+      }
+    }
     this.stack.push(value);
   };
 
@@ -114,7 +124,9 @@ export abstract class LoopVirtualMachine {
     const instructions: string[][] = [];
     try {
       for (const line of lines) {
-        instructions.push(line.split(" "));
+        if (line.trim() !== "") {
+          instructions.push(line.split(" "));
+        }
       }
     } catch (error) {
       throw new Error(`Syntax error: ${error}`);
