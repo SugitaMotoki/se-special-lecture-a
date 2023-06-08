@@ -21,11 +21,7 @@ export abstract class LoopVirtualMachine {
       throw new Error("push requires an argument");
     }
     if (typeof value === "string") {
-      if (value.match(/^[0-9]+$/)) {
-        value = Number(value);
-      } else {
-        throw new Error(`push requires a number: ${value} isn't allowed`);
-      }
+      value = this.toNumber(value);
     }
     this.stack.push(value);
   };
@@ -132,6 +128,19 @@ export abstract class LoopVirtualMachine {
       throw new Error(`Syntax error: ${error}`);
     }
     return instructions;
+  };
+
+  /**
+   * 与えられた文字列が数字であればnumber型にして返す
+   * 数字でなければエラーを投げる
+   * @param {string} value 文字列
+   * @returns {number} 数字
+   */
+  protected toNumber = (value: string): number => {
+    if (value.match(/^[0-9]+$/)) {
+      return Number(value);
+    }
+    throw new Error(`push requires a number: ${value} isn't allowed`);
   };
 
   /** VMを実行する */
