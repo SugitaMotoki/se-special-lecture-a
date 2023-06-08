@@ -12,6 +12,9 @@ export abstract class LoopVirtualMachine {
   /** グローバル変数 */
   private global = new Map<string, number>();
 
+  /** 出力するデータ */
+  protected printData: string[] = [];
+
   /** スタックの状態を確認する */
   public _showStack = () => {
     console.log("=== show stack ===");
@@ -216,6 +219,14 @@ export abstract class LoopVirtualMachine {
       return Number(value);
     }
     throw new Error(`push requires a number: ${value} isn't allowed`);
+  };
+
+  protected clean = () => {
+    this.stack = [];
+    this.global.clear();
+    this.label.clear();
+    this.line = 0;
+    this.printData = [];
   };
 
   /** VMを実行する */

@@ -1,8 +1,7 @@
 import { LoopVirtualMachine } from "./loop_virtual_machine";
 
 export class For extends LoopVirtualMachine {
-  private printData: string[] = [];
-
+  /** ループカウンタ */
   private loopCounter = new Map<
     string,
     {
@@ -17,6 +16,10 @@ export class For extends LoopVirtualMachine {
   /* eslint @typescript-eslint/no-non-null-assertion: "off" */
 
   public override execute(input: string): string {
+    /** データを初期化する */
+    this.clean();
+    this.loopCounter.clear();
+
     /**
      * 命令が格納された2次元配列
      * @example [["push", "1"], ["push", "2"], ["add"], ["print"]]

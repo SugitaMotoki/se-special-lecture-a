@@ -1,14 +1,14 @@
 import { LoopVirtualMachine } from "./loop_virtual_machine";
 
 export class Jump extends LoopVirtualMachine {
-  // private local = new Map<string, number>;
-  private printData: string[] = [];
-
   /* eslint max-lines-per-function: "off" */
   /* eslint max-statements: "off" */
   /* eslint complexity: "off" */
   /* eslint @typescript-eslint/no-non-null-assertion: "off" */
   public override execute(input: string): string {
+    /** データを初期化する */
+    this.clean();
+
     /**
      * 命令が格納された2次元配列
      * @example [["push", "1"], ["push", "2"], ["add"], ["print"]]
