@@ -199,7 +199,7 @@ export abstract class LoopVirtualMachine {
     try {
       for (const line of lines) {
         if (line.trim() !== "") {
-          instructions.push(line.split(" "));
+          instructions.push(line.trim().split(" "));
         }
       }
     } catch (error) {
