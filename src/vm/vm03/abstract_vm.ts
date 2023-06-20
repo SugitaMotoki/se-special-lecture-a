@@ -1,7 +1,7 @@
 /** 配列を実現するためのVMの抽象クラス */
 export abstract class VirtualMachine03 {
   /** VMのスタック */
-  private stack: number[] = [];
+  protected stack: number[] = [];
 
   /** 命令の行数（プログラムカウンタ） */
   protected line = 0;
