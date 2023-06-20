@@ -138,7 +138,7 @@ export abstract class VirtualMachine03 {
       if (typeof line === "undefined") {
         throw new Error(`Undefined label: ${label}`);
       }
-      this.line = line;
+      this.line = line - 1;
     }
   };
 
@@ -153,7 +153,7 @@ export abstract class VirtualMachine03 {
       if (typeof line === "undefined") {
         throw new Error(`Undefined label: ${label}`);
       }
-      this.line = line;
+      this.line = line - 1;
     }
   };
 
