@@ -40,6 +40,7 @@ module.exports = {
     "no-plusplus": "off",
     "no-ternary": "off",
     "max-statements": "off",
+    "complexity": "off",
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "new-cap": ["error", {
         "capIsNewExceptionPattern": "@*", // Decoratorだけ許可
