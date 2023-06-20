@@ -1,4 +1,4 @@
-export const source02: string = `
+export const source02 = `
 push 1
 set_global i
 push 9
@@ -21,4 +21,4 @@ start_for I
   add
   set_global i
 end_for I
-`
+`;
