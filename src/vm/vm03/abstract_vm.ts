@@ -95,7 +95,7 @@ export abstract class VirtualMachine03 {
   /** グローバル変数の定義 */
   protected _setGlobal = (name: string | undefined) => {
     if (!name) {
-      throw new Error("get_global requires an argument");
+      throw new Error("set_global requires an argument");
     }
     const a = this._pop();
     this.global.set(name, a);
