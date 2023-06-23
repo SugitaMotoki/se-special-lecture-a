@@ -273,3 +273,4 @@ export abstract class VirtualMachine03 {
 }
 
 export * from "./types";
+export * from "./modules";
