@@ -19,5 +19,7 @@ export const Instruction = {
   jump: "jump",
   jumpIf: "jump_if",
   jumpIfZero: "jump_if_zero",
+  call: "call",
+  return: "return",
   print: "print",
 };
