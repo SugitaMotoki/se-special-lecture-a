@@ -1,3 +1,8 @@
+import { FunctionState } from "./modules";
+import { VirtualMachineError } from "./types";
+
+/* eslint max-lines: "off" */
+
 /** 配列を実現するためのVMの抽象クラス */
 export abstract class VirtualMachine03 {
   /** VMのスタック */
@@ -6,7 +11,13 @@ export abstract class VirtualMachine03 {
   /** 命令の行数（プログラムカウンタ） */
   protected line = 0;
 
-  /** ラベル */
+  /** メモリ */
+  protected memory: number[][] = [];
+
+  /** 関数 */
+  protected functions: FunctionState[] = [];
+
+  /** ラベル（関数名も含む） */
   protected label = new Map<string, number>();
 
   /** グローバル変数 */
@@ -156,6 +167,29 @@ export abstract class VirtualMachine03 {
       this.line = line - 1;
     }
   };
+
+  /** 関数を呼び出す */
+  protected _call(functionName: string | undefined) {
+    if (!functionName) {
+      throw new Error(`Undefined label name: ${functionName}`);
+    } else if (functionName === "MAIN") {
+      throw new Error(`MAIN function is not callable`);
+    }
+
+    this.functions.push(
+      new FunctionState(functionName, this.line, { line: this.line }),
+    );
+    this._jump(functionName);
+  }
+
+  /** 関数での処理を終えて呼び出した位置へ戻る */
+  protected _return() {
+    const returnedFunction = this.functions.pop();
+    if (!returnedFunction) {
+      throw new VirtualMachineError(this.line, "No function to return");
+    }
+    this.line = returnedFunction.returnAddress;
+  }
 
   /** 値を出力する */
   protected _print = () => {

@@ -1,17 +1,6 @@
-import {
-  VirtualMachine03,
-  Instruction,
-  FunctionState,
-  VirtualMachineError,
-} from "./abstract_vm";
+import { VirtualMachine03, Instruction, FunctionState } from "./abstract_vm";
 
 export class CVMProtoType extends VirtualMachine03 {
-  /** メモリ */
-  private memory: number[][] = [];
-
-  /** 関数の状態を登録する */
-  private functionManager: FunctionState[] = [];
-
   /** 配列名とメモリのインデックスの対応表 */
   private arrayMap = new Map<string, number>();
 
@@ -93,27 +82,6 @@ export class CVMProtoType extends VirtualMachine03 {
     this.stack.push(value);
   };
 
-  private _call(functionName: string | undefined) {
-    if (!functionName) {
-      throw new Error(`Undefined label name: ${functionName}`);
-    }
-    if (functionName === "MAIN") {
-      throw new Error(`MAIN function is not callable`);
-    }
-    this.functionManager.push(
-      new FunctionState(functionName, this.line, { line: this.line }),
-    );
-    this._jump(functionName);
-  }
-
-  private _return() {
-    const returnedFunction = this.functionManager.pop();
-    if (!returnedFunction) {
-      throw new VirtualMachineError(this.line, "No function to return");
-    }
-    this.line = returnedFunction.returnAddress;
-  }
-
   /* eslint max-lines-per-function: "off" */
   /* eslint no-continue: "off" */
   public override execute(input: string): string {
@@ -127,7 +95,7 @@ export class CVMProtoType extends VirtualMachine03 {
     const instructionSet: string[][] = this.parse(input);
 
     /** MAINへ飛ぶ */
-    this.functionManager.push(
+    this.functions.push(
       new FunctionState("MAIN", instructionSet.length - 1, { line: this.line }),
     );
     this._jump("MAIN");
@@ -136,6 +104,8 @@ export class CVMProtoType extends VirtualMachine03 {
     while (this.line < instructionSet.length) {
       /** ${line}行目の命令 */
       const instruction = instructionSet[this.line];
+
+      // console.log(`line: ${this.line}, ${instruction}`);
 
       if (!instruction) {
         this.line++;
