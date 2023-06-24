@@ -95,9 +95,7 @@ export class CVMProtoType extends VirtualMachine03 {
     const instructionSet: string[][] = this.parse(input);
 
     /** MAINへ飛ぶ */
-    this.functions.push(
-      new FunctionState("MAIN", instructionSet.length - 1, { line: this.line }),
-    );
+    this.functions.push(new FunctionState("MAIN", instructionSet.length - 1));
     this._jump("MAIN");
     this.line++;
 
@@ -139,6 +137,12 @@ export class CVMProtoType extends VirtualMachine03 {
           break;
         case Instruction.equal:
           this._equal();
+          break;
+        case Instruction.setLocal:
+          this._setLocal(instruction[1]);
+          break;
+        case Instruction.getLocal:
+          this._getLocal(instruction[1]);
           break;
         case Instruction.setGlobal:
           this._setGlobal(instruction[1]);
