@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-non-null-assertion: off */
+
 import { vm02, vm03 } from "../vm";
 
 import { source00 } from "./ex00";
@@ -22,6 +24,6 @@ const samples = [
   { source: source06, vm: cVmProto },
 ];
 
-const num = 4;
+const num = 6;
 const sample = samples[num];
 console.log(sample!.vm.execute(sample!.source));
