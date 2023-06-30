@@ -11,6 +11,8 @@ export const Instruction = {
   div: "div",
   mod: "mod",
   equal: "equal",
+  setLocal: "set_local",
+  getLocal: "get_local",
   setGlobal: "set_global",
   getGlobal: "get_global",
   defineArray: "define_array",
@@ -19,5 +21,7 @@ export const Instruction = {
   jump: "jump",
   jumpIf: "jump_if",
   jumpIfZero: "jump_if_zero",
+  call: "call",
+  return: "return",
   print: "print",
 };

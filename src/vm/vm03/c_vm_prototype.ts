@@ -1,9 +1,9 @@
-import { VirtualMachine03, Instruction } from "./abstract_vm";
+import { VirtualMachine03, Instruction, FunctionState } from "./abstract_vm";
 
-export class ArrayVM extends VirtualMachine03 {
-  /** メモリ */
-  private memory: number[][] = [];
+/** デバッグ時に環境変数として与えられる文字列 */
+const DEBUG = "DEBUG";
 
+export class CVMProtoType extends VirtualMachine03 {
   /** 配列名とメモリのインデックスの対応表 */
   private arrayMap = new Map<string, number>();
 
@@ -47,6 +47,11 @@ export class ArrayVM extends VirtualMachine03 {
       throw new Error(`Undefined array name: ${name}`);
     }
 
+    // 実装途中
+    if (typeof array === "number") {
+      throw new Error(`Not array name: ${name}`);
+    }
+
     // 配列に値を保存する
     array[index] = value;
 
@@ -75,6 +80,11 @@ export class ArrayVM extends VirtualMachine03 {
       throw new Error(`Undefined array name: ${name}`);
     }
 
+    // 実装途中
+    if (typeof array === "number") {
+      throw new Error(`Not array name: ${name}`);
+    }
+
     /** 取得した値 */
     const value = array[index];
     if (typeof value === "undefined") {
@@ -97,12 +107,26 @@ export class ArrayVM extends VirtualMachine03 {
      */
     const instructionSet: string[][] = this.parse(input);
 
-    // 行数をリセット
-    this.line = 0;
+    /** MAINへ飛ぶ */
+    this.functions.push(new FunctionState("MAIN", instructionSet.length - 1));
+    this._jump("MAIN");
+    this.line++;
+
+    if (process.env[DEBUG]) {
+      console.log("=== input =====");
+      console.log(input);
+      console.log("\n=== label =====");
+      console.log(this.label);
+      console.log("\n=== flow =====");
+    }
 
     while (this.line < instructionSet.length) {
       /** ${line}行目の命令 */
       const instruction = instructionSet[this.line];
+
+      if (process.env[DEBUG]) {
+        console.log(`${String(this.line).padStart(3, " ")}, ${instruction}`);
+      }
 
       if (!instruction) {
         this.line++;
@@ -137,6 +161,12 @@ export class ArrayVM extends VirtualMachine03 {
         case Instruction.equal:
           this._equal();
           break;
+        case Instruction.setLocal:
+          this._setLocal(instruction[1]);
+          break;
+        case Instruction.getLocal:
+          this._getLocal(instruction[1]);
+          break;
         case Instruction.setGlobal:
           this._setGlobal(instruction[1]);
           break;
@@ -161,6 +191,12 @@ export class ArrayVM extends VirtualMachine03 {
         case Instruction.jumpIfZero:
           this._jumpIfZero(instruction[1]);
           break;
+        case Instruction.call:
+          this._call(instruction[1]);
+          break;
+        case Instruction.return:
+          this._return();
+          break;
         case Instruction.print:
           this.printData.push(String(this._pop()));
           break;
@@ -168,6 +204,10 @@ export class ArrayVM extends VirtualMachine03 {
           throw new Error(`Syntax error: ${instruction}`);
       }
       this.line++;
+    }
+
+    if (process.env[DEBUG]) {
+      console.log("\n=== result =====");
     }
     return this.printData.join("\n");
   }

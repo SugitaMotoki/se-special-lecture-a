@@ -1,1 +1,1 @@
-export * from "./array_vm";
+export * from "./c_vm_prototype";

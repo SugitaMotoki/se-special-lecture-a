@@ -1,3 +1,11 @@
+import { FunctionState } from "./modules";
+import { VirtualMachineError, Address, Variable } from "./types";
+
+export * from "./modules";
+export * from "./types";
+
+/* eslint max-lines: "off" */
+
 /** 配列を実現するためのVMの抽象クラス */
 export abstract class VirtualMachine03 {
   /** VMのスタック */
@@ -6,11 +14,17 @@ export abstract class VirtualMachine03 {
   /** 命令の行数（プログラムカウンタ） */
   protected line = 0;
 
-  /** ラベル */
+  /** メモリ */
+  protected memory: Variable[] = [];
+
+  /** 関数 */
+  protected functions: FunctionState[] = [];
+
+  /** ラベル（関数名も含む） */
   protected label = new Map<string, number>();
 
   /** グローバル変数 */
-  private global = new Map<string, number>();
+  private globalAddressMap = new Map<string, number>();
 
   /** 出力するデータ */
   protected printData: string[] = [];
@@ -92,13 +106,83 @@ export abstract class VirtualMachine03 {
     this.stack.push(a === b ? 1 : 0);
   };
 
+  /**
+   * ローカル変数の定義
+   * 指定された名前の変数が現在の関数にあれば代入、なければ新規作成
+   */
+  protected _setLocal = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("set_local requires an argument");
+    }
+    const currentFunction = this.getCurrentFunction();
+    const value = this._pop();
+    const currentAddress = currentFunction.localAddressMap.get(name);
+    if (currentAddress) {
+      if (typeof currentAddress[0] === "undefined") {
+        throw new Error("Invalid address");
+      }
+      this.memory[currentAddress[0]] = value;
+    } else {
+      const lengthOfMemory = this.memory.push(value);
+      const newAddress: Address = [lengthOfMemory - 1];
+      currentFunction.localAddressMap.set(name, newAddress);
+    }
+  };
+
+  /** ローカル変数の取得 */
+  protected _getLocal = (name: string | undefined) => {
+    if (!name) {
+      throw new Error("get_local requires an argument");
+    }
+    const currentFunction = this.getCurrentFunction();
+    const address = currentFunction.localAddressMap.get(name);
+    if (typeof address === "undefined") {
+      throw new Error(`Undefined local variable: ${name}`);
+    }
+
+    // 実装途中
+
+    const addressLengthOfVariable = 1;
+    const addressLengthOfArray = 2;
+
+    if (typeof address[0] === "undefined") {
+      throw new Error("Invalid address");
+    } else if (address.length === addressLengthOfVariable) {
+      const variable = this.memory[address[0]];
+      if (typeof variable === "undefined") {
+        throw new Error(`Undefined local variable: ${name}`);
+      }
+      if (typeof variable === "number") {
+        this.stack.push(variable);
+      }
+    } else if (address.length === addressLengthOfArray) {
+      if (typeof address[1] === "undefined") {
+        throw new Error("Invalid address");
+      }
+      const array = this.memory[address[0]];
+      if (typeof array === "undefined") {
+        throw new Error(`Undefined local variable: ${name}`);
+      }
+      if (typeof array === "number") {
+        throw new Error(`Undefined local variable: ${name}`);
+      }
+      const variable = array[address[1]];
+      if (typeof variable === "undefined") {
+        throw new Error(`Undefined local variable: ${name}`);
+      }
+      if (typeof variable === "number") {
+        this.stack.push(variable);
+      }
+    }
+  };
+
   /** グローバル変数の定義 */
   protected _setGlobal = (name: string | undefined) => {
     if (!name) {
       throw new Error("set_global requires an argument");
     }
     const a = this._pop();
-    this.global.set(name, a);
+    this.globalAddressMap.set(name, a);
   };
 
   /** グローバル変数の取得 */
@@ -106,7 +190,7 @@ export abstract class VirtualMachine03 {
     if (!name) {
       throw new Error("get_global requires an argument");
     }
-    const value = this.global.get(name);
+    const value = this.globalAddressMap.get(name);
     if (value || value === 0) {
       this.stack.push(value);
     } else {
@@ -157,6 +241,27 @@ export abstract class VirtualMachine03 {
     }
   };
 
+  /** 関数を呼び出す */
+  protected _call(functionName: string | undefined) {
+    if (!functionName) {
+      throw new Error(`Undefined label name: ${functionName}`);
+    } else if (functionName === "MAIN") {
+      throw new Error(`MAIN function is not callable`);
+    }
+
+    this.functions.push(new FunctionState(functionName, this.line));
+    this._jump(functionName);
+  }
+
+  /** 関数での処理を終えて呼び出した位置へ戻る */
+  protected _return() {
+    const returnedFunction = this.functions.pop();
+    if (!returnedFunction) {
+      throw new VirtualMachineError(this.line, "No function to return");
+    }
+    this.line = returnedFunction.returnAddress;
+  }
+
   /** 値を出力する */
   protected _print = () => {
     const a = this._pop();
@@ -176,6 +281,16 @@ export abstract class VirtualMachine03 {
       default:
         throw new Error("Too many values in stack");
     }
+  };
+
+  /** 今いる関数を取得する */
+  protected getCurrentFunction = (): FunctionState => {
+    const currentFunction = this.functions[this.functions.length - 1];
+    if (!currentFunction) {
+      // 関数に入っていないことを示すエラー
+      throw new Error("This instruction must be called in a function");
+    }
+    return currentFunction;
   };
 
   /**
@@ -262,7 +377,7 @@ export abstract class VirtualMachine03 {
 
   protected clean = () => {
     this.stack = [];
-    this.global.clear();
+    this.globalAddressMap.clear();
     this.label.clear();
     this.line = 0;
     this.printData = [];
@@ -271,5 +386,3 @@ export abstract class VirtualMachine03 {
   /** VMを実行する */
   abstract execute(input: string): string;
 }
-
-export * from "./types";
