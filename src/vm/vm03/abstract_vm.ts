@@ -116,17 +116,16 @@ export abstract class VirtualMachine03 {
     }
     const currentFunction = this.getCurrentFunction();
     const value = this._pop();
-
-    if (currentFunction.localAddressMap.has(name)) {
-      const address: Address = currentFunction.localAddressMap.get(name)!;
-      if (address.length <= 0) {
+    const currentAddress = currentFunction.localAddressMap.get(name);
+    if (currentAddress) {
+      if (typeof currentAddress[0] === "undefined") {
         throw new Error("Invalid address");
       }
-      this.memory[address[0]!] = value;
+      this.memory[currentAddress[0]] = value;
     } else {
       const lengthOfMemory = this.memory.push(value);
-      const address: Address = [lengthOfMemory - 1];
-      currentFunction.localAddressMap.set(name, address);
+      const newAddress: Address = [lengthOfMemory - 1];
+      currentFunction.localAddressMap.set(name, newAddress);
     }
   };
 
@@ -136,18 +135,20 @@ export abstract class VirtualMachine03 {
       throw new Error("get_local requires an argument");
     }
     const currentFunction = this.getCurrentFunction();
-    if (!currentFunction.localAddressMap.has(name)) {
+    const address = currentFunction.localAddressMap.get(name);
+    if (typeof address === "undefined") {
       throw new Error(`Undefined local variable: ${name}`);
     }
-    const address: Address = currentFunction.localAddressMap.get(name)!;
 
     // 実装途中
 
     const addressLengthOfVariable = 1;
     const addressLengthOfArray = 2;
 
-    if (address.length === addressLengthOfVariable) {
-      const variable = this.memory[address[0]!];
+    if (typeof address[0] === "undefined") {
+      throw new Error("Invalid address");
+    } else if (address.length === addressLengthOfVariable) {
+      const variable = this.memory[address[0]];
       if (typeof variable === "undefined") {
         throw new Error(`Undefined local variable: ${name}`);
       }
@@ -155,14 +156,17 @@ export abstract class VirtualMachine03 {
         this.stack.push(variable);
       }
     } else if (address.length === addressLengthOfArray) {
-      const array = this.memory[address[0]!];
+      if (typeof address[1] === "undefined") {
+        throw new Error("Invalid address");
+      }
+      const array = this.memory[address[0]];
       if (typeof array === "undefined") {
         throw new Error(`Undefined local variable: ${name}`);
       }
       if (typeof array === "number") {
         throw new Error(`Undefined local variable: ${name}`);
       }
-      const variable = array[address[1]!];
+      const variable = array[address[1]];
       if (typeof variable === "undefined") {
         throw new Error(`Undefined local variable: ${name}`);
       }

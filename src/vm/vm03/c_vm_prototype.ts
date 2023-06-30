@@ -1,5 +1,8 @@
 import { VirtualMachine03, Instruction, FunctionState } from "./abstract_vm";
 
+/** デバッグ時に環境変数として与えられる文字列 */
+const DEBUG = "DEBUG";
+
 export class CVMProtoType extends VirtualMachine03 {
   /** 配列名とメモリのインデックスの対応表 */
   private arrayMap = new Map<string, number>();
@@ -44,6 +47,11 @@ export class CVMProtoType extends VirtualMachine03 {
       throw new Error(`Undefined array name: ${name}`);
     }
 
+    // 実装途中
+    if (typeof array === "number") {
+      throw new Error(`Not array name: ${name}`);
+    }
+
     // 配列に値を保存する
     array[index] = value;
 
@@ -70,6 +78,11 @@ export class CVMProtoType extends VirtualMachine03 {
     const array = this.memory[memoryIndex];
     if (!array) {
       throw new Error(`Undefined array name: ${name}`);
+    }
+
+    // 実装途中
+    if (typeof array === "number") {
+      throw new Error(`Not array name: ${name}`);
     }
 
     /** 取得した値 */
@@ -99,11 +112,21 @@ export class CVMProtoType extends VirtualMachine03 {
     this._jump("MAIN");
     this.line++;
 
+    if (process.env[DEBUG]) {
+      console.log("=== input =====");
+      console.log(input);
+      console.log("\n=== label =====");
+      console.log(this.label);
+      console.log("\n=== flow =====");
+    }
+
     while (this.line < instructionSet.length) {
       /** ${line}行目の命令 */
       const instruction = instructionSet[this.line];
 
-      // console.log(`line: ${this.line}, ${instruction}`);
+      if (process.env[DEBUG]) {
+        console.log(`${String(this.line).padStart(3, " ")}, ${instruction}`);
+      }
 
       if (!instruction) {
         this.line++;
@@ -181,6 +204,10 @@ export class CVMProtoType extends VirtualMachine03 {
           throw new Error(`Syntax error: ${instruction}`);
       }
       this.line++;
+    }
+
+    if (process.env[DEBUG]) {
+      console.log("\n=== result =====");
     }
     return this.printData.join("\n");
   }
