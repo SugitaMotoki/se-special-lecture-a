@@ -6,3 +6,6 @@ export * as vm02 from "./vm02";
 
 /** 第3回発表（2023/06/23） */
 export * as vm03 from "./vm03";
+
+/** 第4回発表（2023/07/07） */
+export * as vm04 from "./vm04";
