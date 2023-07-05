@@ -10,28 +10,32 @@ export * from "./types";
 /** デバッグ時に環境変数として与えられる文字列 */
 const DEBUG = "DEBUG";
 
-/** 配列を実現するためのVMの抽象クラス */
+/** 
+ * 第4回発表のVM
+ * - 課題は第3回までのVMの高速化
+ * - C言語の動作を想定
+ */
 export class CVMProtoType2 {
-  /** VMのスタック */
-  protected stack: number[] = [];
-
-  /** 命令の行数（プログラムカウンタ） */
-  protected line = 0;
+  /** スタック */
+  private stack: number[] = [];
 
   /** メモリ */
-  protected memory: Variable[] = [];
+  private memory: Variable[] = [];
+
+  /** 命令の行数（プログラムカウンタ） */
+  private line = 0;
 
   /** 関数 */
-  protected functions: FunctionState[] = [];
+  private functions: FunctionState[] = [];
 
   /** ラベル（関数名も含む） */
-  protected label = new Map<string, number>();
+  private label = new Map<string, number>();
 
-  /** グローバル変数 */
+  /** グローバル変数を登録する辞書 */
   private globalAddressMap = new Map<string, number>();
 
   /** 出力するデータ */
-  protected printData: string[] = [];
+  private printData: string[] = [];
 
   /** スタックの状態を確認する */
   public _showStack = () => {
@@ -41,7 +45,7 @@ export class CVMProtoType2 {
   };
 
   /** スタックから値を取り出す */
-  protected _pop = () => {
+  private _pop = () => {
     const value = this.stack.pop();
     if (value || value === 0) {
       return value;
@@ -50,7 +54,7 @@ export class CVMProtoType2 {
   };
 
   /** スタックに値を積む */
-  protected _push = (value: number | string | undefined) => {
+  private _push = (value: number | string | undefined) => {
     switch (typeof value) {
       case "undefined":
         throw new Error("push requires an argument");
@@ -63,28 +67,28 @@ export class CVMProtoType2 {
   };
 
   /** 加算 */
-  protected _add = () => {
+  private _add = () => {
     const a = this._pop();
     const b = this._pop();
     this.stack.push(a + b);
   };
 
   /** 減算 */
-  protected _sub = () => {
+  private _sub = () => {
     const a = this._pop();
     const b = this._pop();
     this.stack.push(b - a);
   };
 
   /** 乗算 */
-  protected _mul = () => {
+  private _mul = () => {
     const a = this._pop();
     const b = this._pop();
     this.stack.push(a * b);
   };
 
   /** 除算 */
-  protected _div = () => {
+  private _div = () => {
     const a = this._pop();
     const b = this._pop();
     if (a === 0) {
@@ -94,7 +98,7 @@ export class CVMProtoType2 {
   };
 
   /** 剰余 */
-  protected _mod = () => {
+  private _mod = () => {
     const a = this._pop();
     const b = this._pop();
     if (a === 0) {
@@ -104,7 +108,7 @@ export class CVMProtoType2 {
   };
 
   /** 等価 */
-  protected _equal = () => {
+  private _equal = () => {
     const a = this._pop();
     const b = this._pop();
     this.stack.push(a === b ? 1 : 0);
@@ -114,7 +118,7 @@ export class CVMProtoType2 {
    * ローカル変数の定義
    * 指定された名前の変数が現在の関数にあれば代入、なければ新規作成
    */
-  protected _setLocal = (name: string | undefined) => {
+  private _setLocal = (name: string | undefined) => {
     if (!name) {
       throw new Error("set_local requires an argument");
     }
@@ -134,7 +138,7 @@ export class CVMProtoType2 {
   };
 
   /** ローカル変数の取得 */
-  protected _getLocal = (name: string | undefined) => {
+  private _getLocal = (name: string | undefined) => {
     if (!name) {
       throw new Error("get_local requires an argument");
     }
@@ -181,7 +185,7 @@ export class CVMProtoType2 {
   };
 
   /** グローバル変数の定義 */
-  protected _setGlobal = (name: string | undefined) => {
+  private _setGlobal = (name: string | undefined) => {
     if (!name) {
       throw new Error("set_global requires an argument");
     }
@@ -190,7 +194,7 @@ export class CVMProtoType2 {
   };
 
   /** グローバル変数の取得 */
-  protected _getGlobal = (name: string | undefined) => {
+  private _getGlobal = (name: string | undefined) => {
     if (!name) {
       throw new Error("get_global requires an argument");
     }
@@ -203,7 +207,7 @@ export class CVMProtoType2 {
   };
 
   /** ラベルで指定された行へジャンプ */
-  protected _jump = (label: string | undefined) => {
+  private _jump = (label: string | undefined) => {
     if (!label) {
       throw new Error("jump requires an argument");
     }
@@ -216,7 +220,7 @@ export class CVMProtoType2 {
   };
 
   /** popした値が0以外ならジャンプ */
-  protected _jumpIf = (label: string | undefined) => {
+  private _jumpIf = (label: string | undefined) => {
     if (!label) {
       throw new Error("jump_if requires an argument");
     }
@@ -231,7 +235,7 @@ export class CVMProtoType2 {
   };
 
   /** popした値が0ならジャンプ */
-  protected _jumpIfZero = (label: string | undefined) => {
+  private _jumpIfZero = (label: string | undefined) => {
     if (!label) {
       throw new Error("jump_if_zero requires an argument");
     }
@@ -246,7 +250,7 @@ export class CVMProtoType2 {
   };
 
   /** 関数を呼び出す */
-  protected _call(functionName: string | undefined) {
+  private _call(functionName: string | undefined) {
     if (!functionName) {
       throw new Error(`Undefined label name: ${functionName}`);
     } else if (functionName === "MAIN") {
@@ -258,7 +262,7 @@ export class CVMProtoType2 {
   }
 
   /** 関数での処理を終えて呼び出した位置へ戻る */
-  protected _return() {
+  private _return() {
     const returnedFunction = this.functions.pop();
     if (!returnedFunction) {
       throw new VirtualMachineError(this.line, "No function to return");
@@ -267,7 +271,7 @@ export class CVMProtoType2 {
   }
 
   /** 値を出力する */
-  protected _print = () => {
+  private _print = () => {
     const a = this._pop();
     return a;
   };
@@ -276,7 +280,7 @@ export class CVMProtoType2 {
    * スタックのエラーを検知する
    * @returns {boolean} エラーが無ければtrue
    */
-  protected hasStackError = (): boolean => {
+  private hasStackError = (): boolean => {
     switch (this.stack.length) {
       case 0:
         throw new Error("Stack is empty");
@@ -288,7 +292,7 @@ export class CVMProtoType2 {
   };
 
   /** 今いる関数を取得する */
-  protected getCurrentFunction = (): FunctionState => {
+  private getCurrentFunction = (): FunctionState => {
     const currentFunction = this.functions[this.functions.length - 1];
     if (!currentFunction) {
       // 関数に入っていないことを示すエラー
@@ -303,7 +307,7 @@ export class CVMProtoType2 {
    * @param {string} input 入力文字列
    * @returns {Instruction[]} 命令セット
    */
-  protected parse = (input: string): string[][] => {
+  private parse = (input: string): string[][] => {
     this.line = 0;
     const lines = input.split("\n");
     const instructionSet: string[][] = [];
@@ -361,7 +365,7 @@ export class CVMProtoType2 {
    * @param {string} value 文字列
    * @returns {number} 数字
    */
-  protected toNumber = (value: string): number => {
+  private toNumber = (value: string): number => {
     if (!Number.isNaN(Number(value))) {
       return Number(value);
     }
@@ -369,7 +373,7 @@ export class CVMProtoType2 {
   };
 
   /** ラベルの定義 */
-  protected setLabel = (line: number, name: string | undefined) => {
+  private setLabel = (line: number, name: string | undefined) => {
     if (!name) {
       throw new Error("set_label requires an argument");
     }
@@ -379,7 +383,7 @@ export class CVMProtoType2 {
     this.label.set(name, line);
   };
 
-  protected clean = () => {
+  private clean = () => {
     this.stack = [];
     this.globalAddressMap.clear();
     this.label.clear();
@@ -448,7 +452,7 @@ export class CVMProtoType2 {
         case Instruction.mod:
           this._mod();
           break;
-        case Instruction.equal:
+        case Instruction.eq:
           this._equal();
           break;
         case Instruction.setLocal:
