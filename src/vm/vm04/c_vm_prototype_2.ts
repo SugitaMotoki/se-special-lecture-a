@@ -10,7 +10,7 @@ export * from "./types";
 /** デバッグ時に環境変数として与えられる文字列 */
 const DEBUG = "DEBUG";
 
-/** 
+/**
  * 第4回発表のVM
  * - 課題は第3回までのVMの高速化
  * - C言語の動作を想定
@@ -269,27 +269,6 @@ export class CVMProtoType2 {
     }
     this.line = returnedFunction.returnAddress;
   }
-
-  /** 値を出力する */
-  private _print = () => {
-    const a = this._pop();
-    return a;
-  };
-
-  /**
-   * スタックのエラーを検知する
-   * @returns {boolean} エラーが無ければtrue
-   */
-  private hasStackError = (): boolean => {
-    switch (this.stack.length) {
-      case 0:
-        throw new Error("Stack is empty");
-      case 1:
-        return true;
-      default:
-        throw new Error("Too many values in stack");
-    }
-  };
 
   /** 今いる関数を取得する */
   private getCurrentFunction = (): FunctionState => {
