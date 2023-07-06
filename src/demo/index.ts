@@ -14,7 +14,7 @@ import { source07 } from "./ex07";
 const jumpVm = new vm02.Jump();
 const forVm = new vm02.For();
 const cVmProto = new vm03.CVMProtoType();
-const cVmProto2 = new vm04.CVMProtoType2();
+const Vm03Copy = new vm04.VM03Copy();
 
 const samples = [
   { source: source00, vm: jumpVm },
@@ -24,7 +24,7 @@ const samples = [
   { source: source04, vm: cVmProto },
   { source: source05, vm: cVmProto },
   { source: source06, vm: cVmProto },
-  { source: source07, vm: cVmProto2 },
+  { source: source07, vm: Vm03Copy },
 ];
 
 const num = 7;
