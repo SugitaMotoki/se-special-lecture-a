@@ -77,9 +77,9 @@ export abstract class VirtualMachine04 {
    * スタックから2つの値を取り出し、減算結果をスタックに積む
    */
   protected _sub = () => {
-    const b = this._pop();
     const a = this._pop();
-    this._push(a - b);
+    const b = this._pop();
+    this._push(b - a);
   };
 
   /**
@@ -103,7 +103,7 @@ export abstract class VirtualMachine04 {
     if (a === 0) {
       throw new VirtualMachineError(this.pc, "Division by zero");
     }
-    this._push(Math.floor(a / b));
+    this._push(Math.floor(b / a));
   };
 
   /**
@@ -117,7 +117,7 @@ export abstract class VirtualMachine04 {
     if (a === 0) {
       throw new VirtualMachineError(this.pc, "Division by zero");
     }
-    this._push(a % b);
+    this._push(b % a);
   };
 
   /**
@@ -188,7 +188,7 @@ export abstract class VirtualMachine04 {
         throw new Error(`Undefined local variable: ${name}`);
       }
       if (typeof variable === "number") {
-        this.stack.push(variable);
+        this._push(variable);
       }
     } else if (address.length === addressLengthOfArray) {
       if (typeof address[1] === "undefined") {
@@ -206,7 +206,7 @@ export abstract class VirtualMachine04 {
         throw new Error(`Undefined local variable: ${name}`);
       }
       if (typeof variable === "number") {
-        this.stack.push(variable);
+        this._push(variable);
       }
     }
   };
@@ -236,7 +236,7 @@ export abstract class VirtualMachine04 {
     if (typeof value === "undefined") {
       throw new Error(`Undefined global variable: ${name}`);
     }
-    this.stack.push(value);
+    this._push(value);
   };
 
   /**
