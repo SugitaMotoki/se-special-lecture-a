@@ -17,6 +17,8 @@ export const Instruction = {
   gt: "gt", // >
   le: "le", // <=
   lt: "lt", // <
+  inc: "inc", // ++
+  dec: "dec", // --
   // 変数
   setLocal: "set_local",
   getLocal: "get_local",
