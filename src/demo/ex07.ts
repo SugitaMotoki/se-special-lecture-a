@@ -1,15 +1,14 @@
-const number = 10;
+const number = 28;
 
 export const source07 = `
 FIBONACCI:
         set_local n
-        push 0
-        set_local result
 
         get_local n
         push 0
         eq
         jump_if .L3
+
         get_local n
         push 1
         eq
@@ -19,17 +18,11 @@ FIBONACCI:
         push 1
         sub
         call FIBONACCI
-        get_local result
-        add
-        set_local result
         get_local n
         push 2
         sub
         call FIBONACCI
-        get_local result
         add
-        set_local result
-        get_local result
         return
 .L3:
         push 0
