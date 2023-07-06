@@ -11,7 +11,13 @@ export const Instruction = {
   mul: "mul",
   div: "div",
   mod: "mod",
-  equal: "equal",
+  eq: "eq", // ==
+  ne: "ne", // !=
+  ge: "ge", // >=
+  gt: "gt", // >
+  le: "le", // <=
+  lt: "lt", // <
+  // 変数
   setLocal: "set_local",
   getLocal: "get_local",
   setGlobal: "set_global",
