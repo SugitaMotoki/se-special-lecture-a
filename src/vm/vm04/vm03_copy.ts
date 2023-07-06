@@ -6,6 +6,13 @@ import { VirtualMachine04, Instruction, FunctionState } from "./abstract_vm";
 /** デバッグかどうか */
 const isDebug = "DEBUG" in process.env;
 
+/** 時間を測るかどうか */
+const isTime = "TIME" in process.env;
+
+/**
+ * VM03をほぼそのままコピーしたVM04
+ * 速度比較対象として用いる
+ */
 export class VM03Copy extends VirtualMachine04 {
   public execute(input: string): string {
     this.clean();
@@ -29,6 +36,10 @@ export class VM03Copy extends VirtualMachine04 {
       console.log("\n=== label =====");
       console.log(this.labels);
       console.log("\n=== flow =====");
+    }
+
+    if (isTime) {
+      console.time("vm03_copy");
     }
 
     while (this.pc < instructionSet.length) {
@@ -107,6 +118,10 @@ export class VM03Copy extends VirtualMachine04 {
       }
 
       this.pc++;
+    }
+
+    if (isTime) {
+      console.timeEnd("vm03_copy");
     }
 
     if (isDebug) {
