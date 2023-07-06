@@ -358,7 +358,7 @@ export abstract class VirtualMachine04 {
    * @param {string} line
    * @returns {boolean} スキップすべき行かどうか
    */
-  private isSkip = (line: string): boolean => {
+  protected isSkip = (line: string): boolean => {
     return line === "" || line.startsWith("//") || line.startsWith("#");
   };
 
@@ -369,7 +369,7 @@ export abstract class VirtualMachine04 {
    * @returns {void}
    * @throws {Error} ラベルが重複している場合
    */
-  private setLabel = (pc: number, label: string): void => {
+  protected setLabel = (pc: number, label: string): void => {
     if (this.labels.has(label)) {
       throw new Error(`Duplicate label: ${label}`);
     }
