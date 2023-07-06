@@ -398,7 +398,7 @@ export class CVMProtoType2 {
       const instruction = instructionSet[this.line];
 
       if (process.env[DEBUG]) {
-        console.log(`${String(this.line).padStart(3, " ")}, ${instruction}`);
+        console.log(`${String(this.line).padStart(3, " ")}: ${instruction}`);
       }
 
       if (!instruction) {
@@ -478,6 +478,11 @@ export class CVMProtoType2 {
         default:
           throw new Error(`Syntax error: ${instruction}`);
       }
+
+      if (process.env[DEBUG]) {
+        console.log(this.stack);
+      }
+
       this.line++;
     }
 
