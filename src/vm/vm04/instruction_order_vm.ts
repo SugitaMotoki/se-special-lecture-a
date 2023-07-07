@@ -82,6 +82,9 @@ export class InstructionOrderVM extends VirtualMachine04 {
         case Instruction.sub:
           this._sub();
           break;
+        case Instruction.jump:
+          this._jump(instruction[1]);
+          break;
         case Instruction.mul:
           this._mul();
           break;
@@ -96,9 +99,6 @@ export class InstructionOrderVM extends VirtualMachine04 {
           break;
         case Instruction.getGlobal:
           this._getGlobal(instruction[1]);
-          break;
-        case Instruction.jump:
-          this._jump(instruction[1]);
           break;
         case Instruction.print:
           this.printData.push(String(this._pop()));
