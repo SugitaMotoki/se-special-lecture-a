@@ -19,6 +19,9 @@ const forVm = new vm02.For();
 const cVmProto = new vm03.CVMProtoType();
 const Vm03Copy = new vm04.VM03Copy();
 const RichInstructionSetVM = new vm04.RichInstructionSetVM();
+const InstructionOrderVM = new vm04.InstructionOrderVM();
+const ShortInstructionVM = new vm04.ShortInstructionVM();
+const RMEHVM = new vm04.RMEHVM();
 
 const samples = [
   { source: source00, vm: jumpVm },
@@ -30,11 +33,16 @@ const samples = [
   { source: source06, vm: cVmProto },
   { source: source07, vm: Vm03Copy },
   { source: source08, vm: RichInstructionSetVM },
+  { source: source07, vm: InstructionOrderVM },
+  { source: source07, vm: ShortInstructionVM },
+  { source: source07, vm: RMEHVM },
 ];
 
-const num = 7;
+const num = 11;
 const sample = samples[num];
 if (isTime) {
+  sample!.vm.execute(sample!.source);
+  sample!.vm.execute(sample!.source);
   sample!.vm.execute(sample!.source);
 } else {
   console.log(sample!.vm.execute(sample!.source));

@@ -1,4 +1,4 @@
-const number = 28;
+const number = 25;
 
 export const source07 = `
 FIBONACCI:

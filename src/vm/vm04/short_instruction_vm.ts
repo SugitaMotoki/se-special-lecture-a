@@ -2,6 +2,7 @@ import { VirtualMachine04, Instruction, FunctionState } from "./abstract_vm";
 
 /* eslint max-lines-per-function: "off" */
 /* eslint no-continue: "off" */
+/* eslint @typescript-eslint/no-non-null-assertion: "off" */
 
 /** デバッグかどうか */
 const isDebug = "DEBUG" in process.env;
