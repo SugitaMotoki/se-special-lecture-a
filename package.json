@@ -10,6 +10,7 @@
     "build:html": "cp src/index.html docs/index.html",
     "sample": "node docs/demo/index.js",
     "sample:debug": "DEBUG=true node docs/demo/index.js",
+    "sample:time": "TIME=true node docs/demo/index.js",
     "dev": "run-p dev:*",
     "dev:js": "WATCH=true node build.js",
     "format": "prettier --write \"src/**/*.ts\"",

@@ -1,6 +1,6 @@
-const number = 25;
+const number = 30;
 
-export const source07 = `
+export const source08 = `
 FIBONACCI:
         set_local n
 
@@ -37,9 +37,7 @@ MAIN:
 .L1:
         get_local i
         push ${number}
-        push 1
-        add
-        eq
+        gt
         jump_if .L2
 
         get_local i
@@ -47,8 +45,7 @@ MAIN:
         print
 
         get_local i
-        push 1
-        add
+        inc
         set_local i
         jump .L1
 .L2:

@@ -41,6 +41,7 @@ module.exports = {
     "no-ternary": "off",
     "max-statements": "off",
     "complexity": "off",
+    "no-negated-condition": "off", 
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "new-cap": ["error", {
         "capIsNewExceptionPattern": "@*", // Decoratorだけ許可
