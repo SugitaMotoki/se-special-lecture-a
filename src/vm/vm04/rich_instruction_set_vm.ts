@@ -13,16 +13,6 @@ const isTime = "TIME" in process.env;
  * 命令セットを拡張したVM
  */
 export class RichInstructionSetVM extends VirtualMachine04 {
-  protected override _add = (): void => {
-    const a = this._pop();
-    this.stack[this.stack.length - 1] += a;
-  };
-
-  protected override _mul = (): void => {
-    const a = this._pop();
-    this.stack[this.stack.length - 1] *= a;
-  };
-
   /**
    * b >= a なら1を、そうでないなら0をスタックに積む
    */
